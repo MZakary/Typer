@@ -1,0 +1,34 @@
+$primary-blue: #183966;
+$primary-white: #f0f0f0;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*-------------------------------- ANIMATIONS --------------------------------*/
+
+//MainPage:
+@keyframes blink-caret {
+    from, to { border-color: transparent; }
+    50% { border-color: black; }
+}
+@keyframes blink-caret-high-contrast {
+    from, to { border-color: transparent; }
+    50% { border-color: white; }
+}

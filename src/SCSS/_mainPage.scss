@@ -1,0 +1,23 @@
+.MainPage {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .MainPageTitle {
+        font-size: 3em;
+        font-family: 'Courier New', Courier, monospace;
+        white-space: nowrap;
+        overflow: hidden;
+        border-right: 0.15em solid;
+        animation: blink-caret 0.75s step-end infinite; //Voir _variables.scss pour les animations
+    }
+}
+
+//High contrast version of Main Page
+body.high-contrast {
+    .MainPage{
+        .MainPageTitle{
+            animation: blink-caret-high-contrast 0.75s step-end infinite;
+        }
+    }
+}

@@ -1,0 +1,109 @@
+header{
+    display: flex;
+    background-color: $primary-blue;
+    color: $primary-white;
+    padding: 5px 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); // Add this line for the shadow
+    div{
+        width: 33.3%;
+    }
+
+    .Logo{
+        display: flex;
+        justify-content: start;
+        .LogoButton{
+            border-radius: 100%;
+            background-color: $primary-white;
+            color: $primary-blue;
+            padding: 5px;
+            width: 62.5px;
+            height: 62.5px;
+            & span{
+                font-size: 50px;
+                margin: auto;
+            }
+        }
+    }
+
+    .ZoomText{
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        & button{
+            
+            border-radius: 100%;
+            background-color: $primary-white;
+            color: $primary-blue;
+            padding: 5px;
+            width: 62.5px;
+            height: 62.5px;
+            & span{
+                font-size: 50px;
+                margin: auto;
+            }
+        }    
+    }
+    .OtherOptions{
+        display: flex;
+        justify-content: end;
+        gap: 20px;
+        align-items: center;  
+        .Lecon, .APropos, .AideUtil{
+            color: $primary-blue;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .Lecon{
+            background-color: cyan;
+        }
+        .APropos{
+            background-color: red;
+        }
+        .AideUtil{
+            background-color: yellow;
+        }
+    }
+
+
+}
+
+
+footer{
+    display: flex;
+    background-color: $primary-blue;
+    padding: 2px;
+    color: $primary-white;
+    height: 50px;
+    justify-content: center;
+    align-items: center;
+}
+
+
+/* High contrast styles in header and footer */
+body.high-contrast {
+    background-color: #000000;
+    color: $primary-white;
+
+    header{
+        background-color: $primary-white;
+        color: black;
+        .Logo{
+            .LogoButton{
+                background-color: black;
+                color: $primary-white;
+            }
+        }
+        .ZoomText{
+        button{
+            background-color: black;
+            color: $primary-white;
+        }
+        }
+    }
+
+    footer{
+        background-color: $primary-white;
+        color: black;
+    }
+}

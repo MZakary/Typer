@@ -1,0 +1,65 @@
+section.Typer{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    .TextArea{
+        background: inherit;
+        border: none;
+        color: inherit;
+        font-family: Arial;
+        font-size: 4em;
+        resize: none;
+        -ms-text-align-last: center;
+        text-align-last: center;
+        white-space: normal;
+        width: 100%;
+        
+    }
+    .TextArea::placeholder{
+        color: black;
+    }
+
+    .LessonName {
+        width: 100%;
+        font-size: 2em;
+        text-align: center;
+        position: relative; /* Ensure the pseudo-element is positioned relative to the parent */
+    }
+    
+    .LessonName::after {
+        content: ""; /* Required to make the pseudo-element appear */
+        display: block;
+        width: 95%;
+        height: 1px; /* Thickness of the underline */
+        background-color: black; /* Color of the underline */
+        position: absolute;
+        bottom: -5px; /* Adjust this value to position the underline */
+        left: 50%;
+        transform: translateX(-50%); /* Center the underline */
+    }
+
+    .VoiceToggler{
+        border: 1px solid black;
+        padding: 25px 30px;
+        border-radius: 5px;
+        
+    }
+}
+
+body.high-contrast{
+    section.Typer{
+        .TextArea::placeholder{
+            color: $primary-white;
+        }
+
+        .LessonName::after {
+            background-color: $primary-white;
+        }
+
+        .VoiceToggler{
+            border-color: $primary-white;
+        }
+    }
+}

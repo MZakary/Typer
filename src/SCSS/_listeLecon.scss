@@ -1,0 +1,64 @@
+.ListeLeconsPage {
+    //          background-color: #f9f9f9; // Light background for the section 
+    padding: 20px;
+    border-radius: 8px;
+    
+    margin: 0 auto;
+    text-align: center;
+  
+    .title {
+      font-size: 2em;
+      margin-bottom: 20px;
+      color: #333;
+      font-weight: 600;
+    }
+  
+    .listeContainer {
+      list-style-type: none; // Remove bullet points
+      padding: 0;
+  
+      .listeItem {
+        margin: 10px auto;
+        width: 600px;
+  
+        a {
+          text-decoration: none;
+          font-size: 1.2em;
+          color: black; // Link color
+          padding: 10px 15px;
+          display: block;
+          border-radius: 5px;
+          //transition: background-color 0.3s ease, color 0.3s ease;
+  
+          &:hover {
+            background-color: #e7f3ff; // Light blue hover background
+            color: #0056b3;
+          }
+  
+          &:focus {
+            outline: 2px solid #ffcc00; // High-contrast outline for accessibility
+            background-color: #fffae6;
+          }
+        }
+      }
+    }
+  }
+
+
+  body.high-contrast {
+    .ListeLeconsPage{
+        .title{
+            color: $primary-white;
+        }
+        .listeContainer{
+            .listeItem{
+                a{
+                    color: $primary-white;
+                    &:focus {
+                        color: black;
+                    }
+                }
+                }
+        }
+    }
+  }
