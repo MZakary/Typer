@@ -15,6 +15,7 @@ function Layout() {
     }
   };
 
+
   const zoomIn = () => {
     if (fontSize < 36) { // Maximum font size
       setFontSize(prevSize => {
@@ -45,7 +46,7 @@ function Layout() {
     <>
       <header>
         <div className='Logo'>
-          <Link to={'/'} className='LogoButton'><span className="material-icons">home</span></Link>
+          <Link to={'/'} className='LogoButton' aria-label='Accueil'><span className="material-icons" >home</span></Link>
         </div>
         <div className='ZoomText'>
           <button aria-label="dézoomer" name='Bouton Zoom Out' onClick={zoomOut}><span className="material-icons">zoom_out</span></button>

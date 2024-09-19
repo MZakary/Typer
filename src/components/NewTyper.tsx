@@ -6,9 +6,10 @@ import { playSound } from "@/utils/generalUtils";
 interface TyperProps {
     levels: string[]; // Define levels as an array of strings
     lessonName: string;
+    lessonMessage: string;
 }
 
-function NewTyper({levels, lessonName} : TyperProps) {
+function NewTyper({levels, lessonName, lessonMessage} : TyperProps) {
     const [currentLevel, setCurrentLevel] = useState<number>(0); //Commencez niveau 1
     const [currentString, setCurrentString] = useState<string>('');
     const [inputString, setInputString] = useState<string>('');
@@ -18,8 +19,18 @@ function NewTyper({levels, lessonName} : TyperProps) {
     const [totalInputs, setTotalInputs] = useState<number>(0);
     const [errorCount, setErrorCount] = useState<number>(0);
     const [levelAttempts, setLevelAttempts] = useState<number>(0); // Tracks attempts on the current level
+    const [gameStarted, setGameStarted] = useState<boolean>(false);  // New state to track if the game has started
+    const [toggleSynth, setToggleSynth] = useState<boolean>(false);  // New state to track if the game has started
 
 
+    const handleToggleSynth=()=>{
+        setToggleSynth((prev) => !prev);
+    }
+
+    const handleStartGame = () => {
+        setGameStarted(true);  // Set gameStarted to true when start button is clicked
+        annoncerNouvelleLettre(levels[0]);
+    };
 
     const handleFocus = () => {
         setIsTAFocused(true);
@@ -36,7 +47,6 @@ function NewTyper({levels, lessonName} : TyperProps) {
 
         setCurrentLevel(0); //Start level one
         setCurrentString(levels[0]); //Start Letter 1
-        annoncerNouvelleLettre(levels[0]);
         console.log(levels[0]);
     }, []);
 
@@ -44,6 +54,11 @@ function NewTyper({levels, lessonName} : TyperProps) {
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
             if (!isTAFocused) return;
+
+            if (event.ctrlKey && event.altKey && event.key.toLowerCase() === 'r') { // Ctrl + Alt + 
+                annoncerNouvelleLettre(currentString);
+                return;
+            }
         
             let key = event.key;
             playSound('src/sounds/TypeSound.wav');
@@ -72,16 +87,16 @@ function NewTyper({levels, lessonName} : TyperProps) {
             // Check if the input string matches the current string when space is pressed
             if (event.key === ' ') {
                 if (inputString === levels[currentLevel]) {
+                    if (speechSynthesis.speaking) {
+                        speechSynthesis.cancel();  // Only stop if currently speaking
+                    }
+        
                     speakLetter('Bravo!');
                     playSound('src/sounds/GoodSound.wav');
         
                     // Increment attempt count for the current level
                     setLevelAttempts(prevAttempts => prevAttempts + 1);
 
-                    if (speechSynthesis.speaking) {
-                        speechSynthesis.cancel();  // Only stop if currently speaking
-                    }
-        
                     // If the player has completed the level at least 3 times, move to the next level
                     if (levelAttempts + 1 >= 3) {
                         const nextLevel = currentLevel + 1;
@@ -94,6 +109,7 @@ function NewTyper({levels, lessonName} : TyperProps) {
                             if (speechSynthesis.speaking) {
                                 speechSynthesis.cancel();  // Only stop if currently speaking
                             }
+                            speakLetter('Prochain niveau!');
                             annoncerNouvelleLettre(levels[nextLevel]);
                         }
                     } else {
@@ -143,6 +159,8 @@ function NewTyper({levels, lessonName} : TyperProps) {
     // };
 
     const speakLetter = (text: string) => {
+
+        if(toggleSynth) return;
         
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'fr-FR'; // Set language to French
@@ -174,25 +192,50 @@ function NewTyper({levels, lessonName} : TyperProps) {
 
     return (
         <section className="Typer" role="application">
-            <h2 className="LessonName">{lessonName}</h2>
-            <p>Erreurs: {errorCount}</p>
-            <p>{accuracy}%</p>
-            <form action="" autoCorrect="off">
-                <textarea 
-                    onFocus={handleFocus} 
-                    onBlur={handleBlur} 
-                    className="TextArea" 
-                    maxLength={currentString.length}  
-                    placeholder={levels[currentLevel]}
-                    value={inputString}
-                >
-                    {currentString}
-                </textarea>
-            </form>
-    
-            <button className="VoiceToggler" onClick={toggleVoice} aria-live="polite">
-                {isMaleVoice ? 'Passer à la voix féminine' : 'Passer à la voix masculine'}
-            </button>
+            {gameStarted ? (
+                // Game content here once the game is started
+                <>
+                    <h2 className="LessonName">{lessonName}</h2>
+                    <p>Erreurs: {errorCount}</p>
+                    <p>{accuracy}%</p>
+                    <form action="" autoCorrect="off">
+                        <h3 className="displayCurrentString">Mot à frapper: {levels[currentLevel]}</h3>
+                        <textarea 
+                            onFocus={handleFocus} 
+                            onBlur={handleBlur} 
+                            className="TextArea" 
+                            maxLength={currentString.length}  
+                            placeholder={levels[currentLevel]}
+                            value={inputString}
+                        >
+                            {currentString}
+                        </textarea>
+                    </form>
+                    {!toggleSynth ? (<>
+                        <button className="VoiceToggler" onClick={toggleVoice} aria-live="polite">
+                        {isMaleVoice ? 'Passer à la voix féminine' : 'Passer à la voix masculine'}
+                    </button>
+                    </>):(<></>)}
+                </>
+            ) : (
+                // Show start button if the game has not started
+                <div className="StartButton">
+                    <button className="StartGameButton" onClick={handleStartGame}>Commencez</button>
+                    <div className="Options">
+                        <label htmlFor="toggleSynth">Désactiver la synthèse vocale ?</label>
+                        <input 
+                            type="checkbox" 
+                            id="toggleSynth" 
+                            onChange={handleToggleSynth} 
+                            checked={toggleSynth} 
+                            name="toggleSynth" 
+                            aria-checked={toggleSynth} 
+                            aria-labelledby="toggleSynth"
+                        />
+                    </div>
+                    <h2 className="LessonMessage">{lessonMessage}</h2>
+                </div>
+            )}
         </section>
     );
 }

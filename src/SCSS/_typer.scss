@@ -3,7 +3,10 @@ section.Typer{
     flex-direction: column;
     justify-content: center;
     align-items: center;
-
+    .displayCurrentString{
+        font-size: 1.5em;
+        text-align: center;
+    }
     .TextArea{
         background: inherit;
         border: none;
@@ -46,6 +49,32 @@ section.Typer{
         border-radius: 5px;
         
     }
+
+    .StartButton{
+        height: calc(100vh - 122px); 
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        .StartGameButton{
+            background-color: $primary-blue;
+            color: white;
+            padding: 30px 40px;
+            font-size: 2em;
+            border-radius: 5px;
+        }
+        .Options{
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+        }
+        .LessonMessage{
+            font-size: 1.5em;
+            font-weight: bold;
+            border-top: 1px solid black;
+        }
+    }
 }
 
 body.high-contrast{
@@ -59,6 +88,13 @@ body.high-contrast{
         }
 
         .VoiceToggler{
+            border-color: $primary-white;
+        }
+        .StartGameButton{
+            background-color: $primary-white;
+            color: black;
+        }
+        .LessonMessage{
             border-color: $primary-white;
         }
     }
