@@ -1,13 +1,6 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
 
 function ListeLecons(){
-
-    const [gameStarted, setGameStarted] = useState<boolean>(false);  // New state to track if the game has started
-
-    const handleStartGame = () => {
-        setGameStarted(true);  // Set gameStarted to true when start button is clicked
-    };
 
     return(
         <section className="ListeLeconsPage">
