@@ -10,6 +10,8 @@ function Main() {
     const words = ["Défi Clavier de Zakary.", "Commencez votre parcours dès maintenant!"];
 
     useEffect(() => {
+        document.title = "Menu - Typer"
+
         let timer;
 
         const handleType = () => {

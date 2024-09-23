@@ -1,4 +1,11 @@
+import { useEffect } from "react";
+
 function About(){
+
+    useEffect(() => {
+        document.title = `À propos - Typer`;
+    }, []);
+
     return(
         <section className="AboutPage">
             <h1>À propos du Défi Clavier de Zakary.</h1>

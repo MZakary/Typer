@@ -1,7 +1,8 @@
 section.Typer{
+    height: calc(100vh - 123px);
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: start;
     align-items: center;
     .displayCurrentString{
         font-size: 1.5em;
@@ -72,8 +73,62 @@ section.Typer{
         .LessonMessage{
             font-size: 1.5em;
             font-weight: bold;
-            border-top: 1px solid black;
+            border-bottom: 1px solid black;
         }
+    }
+}
+
+.EndScreen{
+    height: calc(100vh - 123px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    h1{
+        font-size: 2em;
+    }
+
+
+    .NameInputDiv {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 20px;
+        
+        label {
+          font-size: 16px;
+          font-weight: bold;
+          //color: #333;
+          margin-bottom: 8px;
+        }
+      
+        input {
+          width: 100%;
+          max-width: 400px;
+          padding: 10px;
+          font-size: 14px;
+          border: 1px solid;
+          border-radius: 4px;
+          transition: border-color 0.3s ease;
+      
+          &:focus {
+            outline: none;
+            border-color: $primary-blue;
+          }
+      
+          &::placeholder {
+            color: #888;
+          }
+        }
+      }
+      
+
+    .BoutonDownload{
+        border: 1px solid;
+        padding: 30px 40px;
+        border-radius: 5px;
+        background-color: white;
     }
 }
 
@@ -96,6 +151,14 @@ body.high-contrast{
         }
         .LessonMessage{
             border-color: $primary-white;
+        }
+        .NameInputDiv{
+            input{
+                background-color: black;
+            }
+        }
+        .BoutonDownload{
+            background-color: black;
         }
     }
 }

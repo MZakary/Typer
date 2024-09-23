@@ -20,7 +20,9 @@ function NewTyper({levels, lessonName, lessonMessage} : TyperProps) {
     const [errorCount, setErrorCount] = useState<number>(0);
     const [levelAttempts, setLevelAttempts] = useState<number>(0); // Tracks attempts on the current level
     const [gameStarted, setGameStarted] = useState<boolean>(false);  // New state to track if the game has started
+    const [gameEnded, setGameEnded] = useState<boolean>(false);  // New state to track if the game has started
     const [toggleSynth, setToggleSynth] = useState<boolean>(false);  // New state to track if the game has started
+    const [playerName, setPlayerName] = useState<string>("");  // New state to track if the game has started
 
 
     const handleToggleSynth=()=>{
@@ -34,20 +36,23 @@ function NewTyper({levels, lessonName, lessonMessage} : TyperProps) {
 
     const handleFocus = () => {
         setIsTAFocused(true);
-        console.log("Text area is focused");
+        //speakLetter("Le jeu est maintenant actif");
+        //console.log("Text area is focused");
     };
 
     const handleBlur = () => {
         setIsTAFocused(false);
-        console.log("Text area is not focused");
+        //speakLetter("Le jeu est maintenant sur pause");
+        //console.log("Text area is not focused");
     };
 
     // Announce the first letter
     useEffect(() => {
-
+        document.title = `${lessonName} - Typer`;
         setCurrentLevel(0); //Start level one
         setCurrentString(levels[0]); //Start Letter 1
-        console.log(levels[0]);
+        speakLetter("Avant de commencer le niveau");
+        //console.log(levels[0]);
     }, []);
 
     // Handle keyboard input only when the text area is focused
@@ -59,6 +64,17 @@ function NewTyper({levels, lessonName, lessonMessage} : TyperProps) {
                 annoncerNouvelleLettre(currentString);
                 return;
             }
+
+             // Handle Escape key to blur the text area
+            if (event.key === 'Escape') {
+                const activeElement = document.activeElement as HTMLElement;
+                if (activeElement.tagName === 'TEXTAREA') {
+                    activeElement.blur();  // Explicitly remove focus from the text area
+                    //console.log('Escape key pressed, blurring text area');
+                }
+                return;  // Prevent any further game logic from handling the escape key
+            }
+
         
             let key = event.key;
             playSound('src/sounds/TypeSound.wav');
@@ -79,8 +95,11 @@ function NewTyper({levels, lessonName, lessonMessage} : TyperProps) {
                 } else {
                     // Mistake made: increment error count and do not add the incorrect key to the inputString
                     setErrorCount(prevErrorCount => prevErrorCount + 1);
-                    speakLetter('Erreur! Réessayez!');
+                    if (speechSynthesis.speaking) {
+                        speechSynthesis.cancel();  // Only stop if currently speaking
+                    }
                     playSound('src/sounds/ErrorSound.wav');  // Optional: play error sound
+                    speakLetter('Erreur! Réessayez à partir de la denière lettre inséré!');
                 }
             }
         
@@ -91,8 +110,8 @@ function NewTyper({levels, lessonName, lessonMessage} : TyperProps) {
                         speechSynthesis.cancel();  // Only stop if currently speaking
                     }
         
-                    speakLetter('Bravo!');
                     playSound('src/sounds/GoodSound.wav');
+                    speakLetter('Bravo!');
         
                     // Increment attempt count for the current level
                     setLevelAttempts(prevAttempts => prevAttempts + 1);
@@ -111,6 +130,9 @@ function NewTyper({levels, lessonName, lessonMessage} : TyperProps) {
                             }
                             speakLetter('Prochain niveau!');
                             annoncerNouvelleLettre(levels[nextLevel]);
+                        }else if(nextLevel == levels.length){
+                            setGameEnded(true);
+                            speakLetter("Vous avez terminer la leçon! Voulez-vous télécharger vos résultats?");
                         }
                     } else {
                         // Otherwise, restart the same level
@@ -119,7 +141,9 @@ function NewTyper({levels, lessonName, lessonMessage} : TyperProps) {
                         annoncerNouvelleLettre(levels[currentLevel]);
                     }
                 } else {
-                    
+                    if (speechSynthesis.speaking) {
+                        speechSynthesis.cancel();  // Only stop if currently speaking
+                    }
                     speakLetter('Réessayez!');
                     setInputString(''); // Reset input if it's incorrect
                 }
@@ -192,14 +216,38 @@ function NewTyper({levels, lessonName, lessonMessage} : TyperProps) {
 
     return (
         <section className="Typer" role="application">
-            {gameStarted ? (
+            {gameEnded ? (
+                // Only show the download button if the game has ended
+                <div className="EndScreen">
+                    <h1>Vous avez terminé la leçon</h1>
+                    <div className="NameInputDiv">
+                        <label htmlFor="Name">Veuillez entrer votre nom</label>
+                        <input type="text" id="Name" placeholder="Entrez votre nom" onChange={(e) => setPlayerName(e.target.value)} />
+                    </div>
+                    <button
+                        className="BoutonDownload"
+                        onClick={() => {
+                            const data = `Results:\nName: ${playerName}\nErreurs: ${errorCount}\nAccuracy: ${accuracy}%`;
+                            const blob = new Blob([data], { type: 'text/plain' });
+                            const url = URL.createObjectURL(blob);
+                            const link = document.createElement('a');
+                            link.href = url;
+                            link.download = 'game_results.txt';
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                        }}
+                    >
+                        Télécharger les résultats
+                    </button>
+                </div>
+            ) : gameStarted ? (
                 // Game content here once the game is started
                 <>
                     <h2 className="LessonName">{lessonName}</h2>
                     <p>Erreurs: {errorCount}</p>
                     <p>{accuracy}%</p>
                     <form action="" autoCorrect="off">
-                        <h3 className="displayCurrentString">Mot à frapper: {levels[currentLevel]}</h3>
                         <textarea 
                             onFocus={handleFocus} 
                             onBlur={handleBlur} 
@@ -207,20 +255,21 @@ function NewTyper({levels, lessonName, lessonMessage} : TyperProps) {
                             maxLength={currentString.length}  
                             placeholder={levels[currentLevel]}
                             value={inputString}
+                            autoFocus
                         >
                             {currentString}
                         </textarea>
                     </form>
-                    {!toggleSynth ? (<>
+                    {!toggleSynth ? (
                         <button className="VoiceToggler" onClick={toggleVoice} aria-live="polite">
-                        {isMaleVoice ? 'Passer à la voix féminine' : 'Passer à la voix masculine'}
-                    </button>
-                    </>):(<></>)}
+                            {isMaleVoice ? 'Passer à la voix féminine' : 'Passer à la voix masculine'}
+                        </button>
+                    ) : null}
                 </>
             ) : (
                 // Show start button if the game has not started
-                <div className="StartButton">
-                    <button className="StartGameButton" onClick={handleStartGame}>Commencez</button>
+                <div className="StartButton" autoFocus >
+                    <h2 className="LessonMessage">{lessonMessage}</h2>
                     <div className="Options">
                         <label htmlFor="toggleSynth">Désactiver la synthèse vocale ?</label>
                         <input 
@@ -233,11 +282,12 @@ function NewTyper({levels, lessonName, lessonMessage} : TyperProps) {
                             aria-labelledby="toggleSynth"
                         />
                     </div>
-                    <h2 className="LessonMessage">{lessonMessage}</h2>
+                    <button className="StartGameButton" onClick={handleStartGame}>Commencez</button>
                 </div>
             )}
         </section>
     );
+    
 }
 
 export default NewTyper;

@@ -1,5 +1,5 @@
 .MainPage {
-    height: 100%;
+    height: calc(100vh - 122px); 
     display: flex;
     justify-content: center;
     align-items: center;
