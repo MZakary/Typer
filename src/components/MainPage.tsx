@@ -42,7 +42,7 @@ function Main() {
     }, [text, isDeleting, loopNum, typingSpeed, words]);
 
     return (
-        <section className="MainPage">
+        <section className="MainPage" aria-hidden>
             <h1 className='MainPageTitle'>{text}</h1>
         </section>
     );

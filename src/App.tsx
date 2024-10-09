@@ -1,6 +1,7 @@
 import { RouterProvider, createBrowserRouter, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
 import MainPage from './components/MainPage';
+import NewMainPage from './components/NewMainPage';
 import './SCSS/_style.scss';
 import NewTyper from './components/NewTyper';
 import About from './components/About';
@@ -29,7 +30,7 @@ function App() {
             path: '/',
             element: <Layout />,
             children: [
-              { element: <MainPage/>, index: true },
+              { element: <NewMainPage/>, index: true },
               {path: 'lecons', element: <ListeLecons/>},
               {path: 'lecon1', element: <NewTyper levels={Levels[0]} lessonName={'La Lettre a'} lessonMessage="Pour la lettre A. on utilise l'auriculaire gauche."/>},
               {path: 'lecon2', element: <NewTyper levels={Levels[1]} lessonName={'La Lettre s'} lessonMessage="Pour la lettre S. on utilise l'annulaire gauche."/>},
