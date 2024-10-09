@@ -1,6 +1,6 @@
 import { RouterProvider, createBrowserRouter, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
-import MainPage from './components/MainPage';
+//import MainPage from './components/MainPage';
 import NewMainPage from './components/NewMainPage';
 import './SCSS/_style.scss';
 import NewTyper from './components/NewTyper';
