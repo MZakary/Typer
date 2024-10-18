@@ -1,15 +1,15 @@
 
 
 import { useState, useEffect } from "react";
-import { playSound } from "@/utils/generalUtils";
+import { playSound, checkFrenchWord } from "@/utils/generalUtils";
+
 
 interface TyperProps {
     levels: string[]; // Define levels as an array of strings
     lessonName: string;
-    lessonMessage: string;
 }
 
-function NewTyper({levels, lessonName, lessonMessage} : TyperProps) {
+function NewTyper({levels, lessonName} : TyperProps) {
     const [currentLevel, setCurrentLevel] = useState<number>(0); //Commencez niveau 1
     const [currentString, setCurrentString] = useState<string>('');
     const [inputString, setInputString] = useState<string>('');
@@ -23,8 +23,6 @@ function NewTyper({levels, lessonName, lessonMessage} : TyperProps) {
     const [gameEnded, setGameEnded] = useState<boolean>(false);  // New state to track if the game has started
     const [toggleSynth, setToggleSynth] = useState<boolean>(false);  // New state to track if the game has started
     const [playerName, setPlayerName] = useState<string>("");  // New state to track if the game has started
-
-
     const handleToggleSynth=()=>{
         setToggleSynth((prev) => !prev);
     }
@@ -36,14 +34,22 @@ function NewTyper({levels, lessonName, lessonMessage} : TyperProps) {
 
     const handleFocus = () => {
         setIsTAFocused(true);
-        //speakLetter("Le jeu est maintenant actif");
-        //console.log("Text area is focused");
     };
 
     const handleBlur = () => {
         setIsTAFocused(false);
-        //speakLetter("Le jeu est maintenant sur pause");
-        //console.log("Text area is not focused");
+    };
+
+    const validateWord = async (word: string) => {
+        const isAWord = await checkFrenchWord(word);
+        console.log("The word "+word+' is '+isAWord);
+        console.log('level attempts:' + levelAttempts);
+    
+        if (isAWord) {
+          setLevelAttempts(prevAttempts => prevAttempts + 1);
+        } else {
+          setLevelAttempts(4);
+        }
     };
 
     // Announce the first letter
@@ -59,6 +65,8 @@ function NewTyper({levels, lessonName, lessonMessage} : TyperProps) {
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
             if (!isTAFocused) return;
+
+            if(gameEnded) return;
 
             if (event.ctrlKey && event.altKey && event.key.toLowerCase() === 'r') { // Ctrl + Alt + 
                 annoncerNouvelleLettre(currentString);
@@ -105,16 +113,21 @@ function NewTyper({levels, lessonName, lessonMessage} : TyperProps) {
         
             // Check if the input string matches the current string when space is pressed
             if (event.key === ' ') {
+
                 if (inputString === levels[currentLevel]) {
                     if (speechSynthesis.speaking) {
                         speechSynthesis.cancel();  // Only stop if currently speaking
                     }
-        
                     playSound('src/sounds/GoodSound.wav');
                     speakLetter('Bravo!');
-        
-                    // Increment attempt count for the current level
+                    
+
+                   
+                    //CREATE FUNCTION TO CHECK IF ITS A WORD OR JUST LETTERS
+                    //validateWord(inputString);
+
                     setLevelAttempts(prevAttempts => prevAttempts + 1);
+
 
                     // If the player has completed the level at least 3 times, move to the next level
                     if (levelAttempts + 1 >= 3) {
@@ -132,6 +145,8 @@ function NewTyper({levels, lessonName, lessonMessage} : TyperProps) {
                             annoncerNouvelleLettre(levels[nextLevel]);
                         }else if(nextLevel == levels.length){
                             setGameEnded(true);
+                            setGameStarted(false);
+                            setIsTAFocused(false);
                             speakLetter("Vous avez terminer la leçon! Voulez-vous télécharger vos résultats?");
                         }
                     } else {
@@ -207,7 +222,7 @@ function NewTyper({levels, lessonName, lessonMessage} : TyperProps) {
     const toggleVoice = () => {
         setIsMaleVoice(prev => !prev);
         playSound('src/sounds/ChangementDeVoix.wav');
-        
+
     };
 
 
@@ -243,7 +258,7 @@ function NewTyper({levels, lessonName, lessonMessage} : TyperProps) {
                 </div>
             ) : gameStarted ? (
                 // Game content here once the game is started
-                <>
+                <div className="TyperGame">
                     <h2 className="LessonName">{lessonName}</h2>
                     <p>Erreurs: {errorCount}</p>
                     <p>{accuracy}%</p>
@@ -265,11 +280,42 @@ function NewTyper({levels, lessonName, lessonMessage} : TyperProps) {
                             {isMaleVoice ? 'Passer à la voix féminine' : 'Passer à la voix masculine'}
                         </button>
                     ) : null}
-                </>
+                </div>
             ) : (
                 // Show start button if the game has not started
                 <div className="StartButton" autoFocus >
-                    <h2 className="LessonMessage">{lessonMessage}</h2>
+                    <h1>{lessonName}</h1>
+                    <h2 className="LessonMessage">Instructions</h2>
+                    <p className="StartParagraph">Pour faciliter un repérage efficace des touches, des points de repère tactile peuvent être apposés sur les lettres F et J qui se trouvent sur la deuxième rangée.</p>
+                    <p className="StartParagraph">Pour bien positionner vos mains, veuillez d'abord mettre vos pouces sur la barre d’espacement puis déplacer vos index vers le haut de façon à atteindre les points de repères situés sur le f et le j.</p>
+                    <p className="StartParagraph">Les lettres <strong>A, S, D, F, J, K, L</strong> et le <strong>POINT-VIRGULE (;)</strong> sont des touches de la rangée de <strong>BASE</strong>. </p>                
+                    <p className="StartParagraph">Nous y reviendrons un peu plus tard, mais il est bon de mentionner qu'à partir de cette rangée, lorsque l'on frappe des touches supérieures, on déplace le doigt légèrement à gauche. Lorsque l'on frappe des touches inférieures, on déplace le doigt légèrement à droite. </p>
+                    
+                    {/* <p>Explorons maintenant la rangée de base :</p> */}
+
+                    <div className="divMains">
+                        <div className="divMainsGauche">
+                            <h3>Main gauche :</h3>
+                            <ul>
+                                <li>Pour la lettre A. on utilise l'auriculaire gauche. </li>
+                                <li>Pour la lettre S. on utilise l'annulaire gauche.</li>
+                                <li>Pour la lettre D. on utilise le majeur gauche.</li>
+                                <li>Pour la lettre F. on utilise l'index gauche</li>
+                            </ul>
+                        </div>
+                        <div className="divMainsDroite">
+                            <h3>Main droite :</h3>
+                            <ul>
+                                <li>Pour la touche « ; », on utilise l'auriculaire droit. </li>
+                                <li>Pour la lettre L. on utilise l'annulaire droite.</li>
+                                <li>Pour la lettre K. on utilise le majeur droite.</li>
+                                <li>Pour la lettre J. on utilise l'index droite</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <p className="StartParagraph">Vous devez appuyer sur la touche espace après chaque caractère, mot ou expression demandé.</p>
+                    <p className="StartParagraph">Rappel!  Vous pouvez effectuer la commande clavier Ctrl+r afin de répéter l'information ou consulter les instructions directement à partir de la page d'activités.</p>
                     <div className="Options">
                         <label htmlFor="toggleSynth">Désactiver la synthèse vocale ?</label>
                         <input 

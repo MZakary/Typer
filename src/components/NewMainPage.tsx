@@ -32,7 +32,7 @@ function NewMainPage(){
             <p>Par la suite, il vous sera demandé des expressions ou de courtes phrases que vous devrez écrire correctement.</p>
             <p>Le but à atteindre est la précision plutôt que la vitesse.</p>
             <p>Pour parfaire l'apprentissage de la localisation et la mémorisation des touches sur le clavier de l'ordinateur, il vous sera proposé de passer à la section des exercices synthèses. Cette partie comprend deux textes (courriel et informatif) à transcrire et une série de questions auxquelles la personne est invitée à répondre de façon personnalisée.</p>
-            <p>En tout temps durant les leçons vous pourrez effectuer la commande clavier Ctrl+r afin de répéter l'information ou Ctrl+l pour annoncer les instructions du doit à utiliser.</p>
+            <p>En tout temps durant les leçons vous pourrez effectuer la commande clavier Ctrl+r afin de répéter l'information ou consulter les instructions.</p>
             <p>Une rétroaction sonore vous sera fourni afin de vous avisez de votre réussite et de vos erreurs.</p>
 
             <h2>Voir la liste des leçons</h2>

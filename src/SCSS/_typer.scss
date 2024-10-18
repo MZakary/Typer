@@ -1,9 +1,17 @@
 section.Typer{
-    height: calc(100vh - 123px);
+    height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: start;
+    justify-content: center;
     align-items: center;
+
+    .TyperGame{
+        height: calc(100vh - 123px);
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        align-items: center;
+    }
     .displayCurrentString{
         font-size: 1.5em;
         text-align: center;
@@ -52,18 +60,24 @@ section.Typer{
     }
 
     .StartButton{
-        height: calc(100vh - 122px); 
+        height: 100%;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
         gap: 10px;
+
+        h1{
+            font-size: 2em;
+        }
+
         .StartGameButton{
             background-color: $primary-blue;
             color: white;
             padding: 30px 40px;
             font-size: 2em;
             border-radius: 5px;
+            margin-bottom: 20px;
         }
         .Options{
             display: flex;
@@ -74,6 +88,18 @@ section.Typer{
             font-size: 1.5em;
             font-weight: bold;
             border-bottom: 1px solid black;
+        }
+        .divMains{
+            display: flex;
+            gap: 40px;
+
+            .divMainsDroite{
+                text-align: right;
+            }
+        }
+
+        .StartParagraph{
+            width: 80%
         }
     }
 }

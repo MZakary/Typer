@@ -9,6 +9,7 @@ import ListeLecons from './components/ListeLecons';
 
 
 const Levels: string[][] = [
+  // ['a'],
   ['a', 'aa', 'aaa', 'asdf', 'a', 'aa', 'aaa', 'aaaa', 'a', 'a', 'aaa'],
   ["s", "ss", "sss", 's', 'sss', 's', 'sa', 'as', 'aa', 'sss', 'ssa', 'aas'],
   ["d", "dd", "ddd", "dd", "d", "da", "ad", "sds", "ds", "sd", "asd", "sda"],
@@ -32,15 +33,15 @@ function App() {
             children: [
               { element: <NewMainPage/>, index: true },
               {path: 'lecons', element: <ListeLecons/>},
-              {path: 'lecon1', element: <NewTyper levels={Levels[0]} lessonName={'La Lettre a'} lessonMessage="Pour la lettre A. on utilise l'auriculaire gauche."/>},
-              {path: 'lecon2', element: <NewTyper levels={Levels[1]} lessonName={'La Lettre s'} lessonMessage="Pour la lettre S. on utilise l'annulaire gauche."/>},
-              {path: 'lecon3', element: <NewTyper levels={Levels[2]} lessonName={'La Lettre d'} lessonMessage=""/>},
-              {path: 'lecon4', element: <NewTyper levels={Levels[3]} lessonName={'La Lettre f'} lessonMessage=""/>},
-              {path: 'lecon5', element: <NewTyper levels={Levels[4]} lessonName={'La Lettre j'} lessonMessage=""/>},
-              {path: 'lecon6', element: <NewTyper levels={Levels[5]} lessonName={'La Lettre k'} lessonMessage=""/>},
-              {path: 'lecon7', element: <NewTyper levels={Levels[6]} lessonName={'La Lettre l'} lessonMessage=""/>},
-              {path: 'lecon8', element: <NewTyper levels={Levels[7]} lessonName={'Le point virgule'} lessonMessage=""/>},
-              {path: 'lecon9', element: <NewTyper levels={Levels[8]} lessonName={'Le point virgule (suite)'} lessonMessage=""/>},
+              {path: 'lecon1', element: <NewTyper levels={Levels[0]} lessonName={'La Lettre a'} />},
+              {path: 'lecon2', element: <NewTyper levels={Levels[1]} lessonName={'La Lettre s'} />},
+              {path: 'lecon3', element: <NewTyper levels={Levels[2]} lessonName={'La Lettre d'} />},
+              {path: 'lecon4', element: <NewTyper levels={Levels[3]} lessonName={'La Lettre f'} />},
+              {path: 'lecon5', element: <NewTyper levels={Levels[4]} lessonName={'La Lettre j'} />},
+              {path: 'lecon6', element: <NewTyper levels={Levels[5]} lessonName={'La Lettre k'} />},
+              {path: 'lecon7', element: <NewTyper levels={Levels[6]} lessonName={'La Lettre l'} />},
+              {path: 'lecon8', element: <NewTyper levels={Levels[7]} lessonName={'Le point virgule'} />},
+              {path: 'lecon9', element: <NewTyper levels={Levels[8]} lessonName={'Le point virgule (suite)'} />},
               
               {path: 'a-propos', element: <About/>},
               {path: '*', element: <Navigate to="/" replace /> },
