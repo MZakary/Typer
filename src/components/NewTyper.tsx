@@ -1,8 +1,7 @@
 
 
 import { useState, useEffect } from "react";
-import { playSound, checkFrenchWord } from "@/utils/generalUtils";
-
+import { playSound } from "@/utils/generalUtils";
 
 interface TyperProps {
     levels: string[]; // Define levels as an array of strings
@@ -23,6 +22,17 @@ function NewTyper({levels, lessonName} : TyperProps) {
     const [gameEnded, setGameEnded] = useState<boolean>(false);  // New state to track if the game has started
     const [toggleSynth, setToggleSynth] = useState<boolean>(false);  // New state to track if the game has started
     const [playerName, setPlayerName] = useState<string>("");  // New state to track if the game has started
+    const [startTime, setStartTime] = useState<Date | null>(null);
+    const [endTime, setEndTime] = useState<Date | null>(null);
+    const [timeTaken, setTimeTaken] = useState<number | null>(null);
+
+
+    const wordDictionary: string[] = ['aa', 'asdf', 'voiture', 'maison'];
+
+    function isWordInDictionary(word: string): boolean {
+        return wordDictionary.includes(word.toLowerCase());
+    }
+
     const handleToggleSynth=()=>{
         setToggleSynth((prev) => !prev);
     }
@@ -30,6 +40,9 @@ function NewTyper({levels, lessonName} : TyperProps) {
     const handleStartGame = () => {
         setGameStarted(true);  // Set gameStarted to true when start button is clicked
         annoncerNouvelleLettre(levels[0]);
+        //Start timer here
+        setStartTime(new Date());  // Capture the start time
+        console.log(endTime, levelAttempts); // console.log useless stuff
     };
 
     const handleFocus = () => {
@@ -38,18 +51,6 @@ function NewTyper({levels, lessonName} : TyperProps) {
 
     const handleBlur = () => {
         setIsTAFocused(false);
-    };
-
-    const validateWord = async (word: string) => {
-        const isAWord = await checkFrenchWord(word);
-        console.log("The word "+word+' is '+isAWord);
-        console.log('level attempts:' + levelAttempts);
-    
-        if (isAWord) {
-          setLevelAttempts(prevAttempts => prevAttempts + 1);
-        } else {
-          setLevelAttempts(4);
-        }
     };
 
     // Announce the first letter
@@ -119,42 +120,50 @@ function NewTyper({levels, lessonName} : TyperProps) {
                         speechSynthesis.cancel();  // Only stop if currently speaking
                     }
                     playSound('src/sounds/GoodSound.wav');
-                    speakLetter('Bravo!');
+                    speakLetter('Bravo!');      
                     
+                    // Check if it's a word and update levelAttempts correctly
+                    setLevelAttempts((prevAttempts) => {
+                        const newAttempts = isWordInDictionary(inputString) ? prevAttempts + 1 : prevAttempts + 3;
 
-                   
-                    //CREATE FUNCTION TO CHECK IF ITS A WORD OR JUST LETTERS
-                    //validateWord(inputString);
+                        // If the player has completed the level at least 3 times, move to the next level
+                        if (newAttempts >= 3) {
+                            const nextLevel = currentLevel + 1;
+                
+                            if (nextLevel < levels.length) {
+                                setCurrentLevel(nextLevel);
+                                setCurrentString(levels[nextLevel]);
+                                setInputString(''); // Reset input for the next level
+                                speakLetter('Prochain niveau!');
+                                annoncerNouvelleLettre(levels[nextLevel]);
+                                return 0; // Reset attempts for the new level
+                            } else if (nextLevel === levels.length) {
+                                
+                                const endTime = new Date();  // Capture the end time
+                                setEndTime(endTime);
+                                if (startTime) {
+                                    const timeDifference = endTime.getTime() - startTime.getTime();  // Difference in milliseconds
+                                    const secondsTaken = Math.floor(timeDifference / 1000);  // Convert to seconds
+                                    setTimeTaken(secondsTaken);  // Store time taken in the state
+                                }
+                                
+                                setGameEnded(true);
+                                setGameStarted(false);
+                                setIsTAFocused(false);
+                                speakLetter("Vous avez terminer la leçon! Voulez-vous télécharger vos résultats?");
+                                
+                                //Get time at the end and subtract beginning from end to see how long it took for the game too complete
 
-                    setLevelAttempts(prevAttempts => prevAttempts + 1);
-
-
-                    // If the player has completed the level at least 3 times, move to the next level
-                    if (levelAttempts + 1 >= 3) {
-                        const nextLevel = currentLevel + 1;
-        
-                        if (nextLevel < levels.length) {
-                            setCurrentLevel(nextLevel);
-                            setCurrentString(levels[nextLevel]);
-                            setInputString(''); // Reset input for the next level
-                            setLevelAttempts(0); // Reset attempts for the new level
-                            if (speechSynthesis.speaking) {
-                                speechSynthesis.cancel();  // Only stop if currently speaking
                             }
-                            speakLetter('Prochain niveau!');
-                            annoncerNouvelleLettre(levels[nextLevel]);
-                        }else if(nextLevel == levels.length){
-                            setGameEnded(true);
-                            setGameStarted(false);
-                            setIsTAFocused(false);
-                            speakLetter("Vous avez terminer la leçon! Voulez-vous télécharger vos résultats?");
+                        } else {
+                            // Otherwise, replay the level
+                            setInputString(''); // Reset input to replay the level
+                            speakLetter(`Rejouez le niveau ${currentLevel + 1} encore!`);
+                            annoncerNouvelleLettre(levels[currentLevel]);
                         }
-                    } else {
-                        // Otherwise, restart the same level
-                        setInputString(''); // Reset input to replay the level
-                        speakLetter(`Rejouez le niveau ${currentLevel + 1} encore!`); // Encourage replay
-                        annoncerNouvelleLettre(levels[currentLevel]);
-                    }
+
+                        return newAttempts; // Update attempts
+                    });
                 } else {
                     if (speechSynthesis.speaking) {
                         speechSynthesis.cancel();  // Only stop if currently speaking
@@ -242,7 +251,7 @@ function NewTyper({levels, lessonName} : TyperProps) {
                     <button
                         className="BoutonDownload"
                         onClick={() => {
-                            const data = `Results:\nName: ${playerName}\nErreurs: ${errorCount}\nAccuracy: ${accuracy}%`;
+                            const data = `Results:\nName: ${playerName}\nErreurs: ${errorCount}\nAccuracy: ${accuracy}%\nTime: ${timeTaken} secondes`;
                             const blob = new Blob([data], { type: 'text/plain' });
                             const url = URL.createObjectURL(blob);
                             const link = document.createElement('a');
@@ -262,6 +271,7 @@ function NewTyper({levels, lessonName} : TyperProps) {
                     <h2 className="LessonName">{lessonName}</h2>
                     <p>Erreurs: {errorCount}</p>
                     <p>{accuracy}%</p>
+                    
                     <form action="" autoCorrect="off">
                         <textarea 
                             onFocus={handleFocus} 
