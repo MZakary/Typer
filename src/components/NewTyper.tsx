@@ -69,7 +69,7 @@ function NewTyper({levels, lessonName} : TyperProps) {
 
             if(gameEnded) return;
 
-            if (event.ctrlKey && event.altKey && event.key.toLowerCase() === 'r') { // Ctrl + Alt + 
+            if (event.ctrlKey && event.altKey && event.key.toLowerCase() === 'r') { // Ctrl + Alt + r
                 annoncerNouvelleLettre(currentString);
                 return;
             }
