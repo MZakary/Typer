@@ -8,6 +8,7 @@ interface TyperProps {
     lessonName: string;
 }
 
+
 function NewTyper({levels, lessonName} : TyperProps) {
     const [currentLevel, setCurrentLevel] = useState<number>(0); //Commencez niveau 1
     const [currentString, setCurrentString] = useState<string>('');
@@ -168,7 +169,8 @@ function NewTyper({levels, lessonName} : TyperProps) {
                     if (speechSynthesis.speaking) {
                         speechSynthesis.cancel();  // Only stop if currently speaking
                     }
-                    speakLetter('Réessayez!');
+                    speakLetter('Erreur! Réessayez!');
+                    setErrorCount(prevErrorCount => prevErrorCount + 1);
                     setInputString(''); // Reset input if it's incorrect
                 }
             }
