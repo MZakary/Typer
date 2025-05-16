@@ -40,6 +40,7 @@ function Typer() {
                 if (inputLetter === currentLetter) {
                     speakLetter('Bravo!');
                     playSound('src/sounds/GoodSound.wav');
+                    console.log('sound should play');
 
                     const newLetter = generateRandomLetter();
                     setCurrentLetter(newLetter);

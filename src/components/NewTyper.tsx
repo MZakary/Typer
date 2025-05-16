@@ -86,7 +86,7 @@ function NewTyper({levels, lessonName} : TyperProps) {
 
         
             let key = event.key;
-            playSound('src/sounds/TypeSound.wav');
+            playSound('/sounds/TypeSound.wav');
         
             if (event.code === 'Semicolon') {
                 key = ';';
@@ -107,7 +107,7 @@ function NewTyper({levels, lessonName} : TyperProps) {
                     if (speechSynthesis.speaking) {
                         speechSynthesis.cancel();  // Only stop if currently speaking
                     }
-                    playSound('src/sounds/ErrorSound.wav');  // Optional: play error sound
+                    playSound('/sounds/ErrorSound.wav');  // Optional: play error sound
                     speakLetter('Erreur! Réessayez à partir de la denière lettre inséré!');
                 }
             }
@@ -119,7 +119,7 @@ function NewTyper({levels, lessonName} : TyperProps) {
                     if (speechSynthesis.speaking) {
                         speechSynthesis.cancel();  // Only stop if currently speaking
                     }
-                    playSound('src/sounds/GoodSound.wav');
+                    playSound('/sounds/GoodSound.wav');
                     speakLetter('Bravo!');      
                     
                     // Check if it's a word and update levelAttempts correctly
@@ -281,6 +281,7 @@ function NewTyper({levels, lessonName} : TyperProps) {
                             placeholder={levels[currentLevel]}
                             value={inputString}
                             autoFocus
+                            //onChange={(e) => setInputString(e.target.value)}  // <== ADD THIS
                         >
                             {currentString}
                         </textarea>
