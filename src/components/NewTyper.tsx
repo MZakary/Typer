@@ -169,6 +169,7 @@ function NewTyper({levels, lessonName} : TyperProps) {
                     if (speechSynthesis.speaking) {
                         speechSynthesis.cancel();  // Only stop if currently speaking
                     }
+                    playSound('/sounds/ErrorSound.wav');  // Optional: play error sound
                     speakLetter('Erreur! Réessayez!');
                     setErrorCount(prevErrorCount => prevErrorCount + 1);
                     setInputString(''); // Reset input if it's incorrect
