@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { playSound } from "@/utils/generalUtils";
+import wordDictionary from "@/assets/dictionnary";
 
 interface TyperProps {
     levels: string[]; // Define levels as an array of strings
@@ -27,8 +28,7 @@ function NewTyper({levels, lessonName} : TyperProps) {
     const [endTime, setEndTime] = useState<Date | null>(null);
     const [timeTaken, setTimeTaken] = useState<number | null>(null);
 
-
-    const wordDictionary: string[] = ['aa', 'asdf', 'voiture', 'maison'];
+    // const wordDictionary: string[] = wordDictionary;
 
     function isWordInDictionary(word: string): boolean {
         return wordDictionary.includes(word.toLowerCase());
