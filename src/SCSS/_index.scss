@@ -55,13 +55,13 @@ header{
         }
 
         .Lecon{
-            background-color: cyan;
+            background-color: white;
         }
         .APropos{
-            background-color: red;
+            background-color: white;
         }
         .AideUtil{
-            background-color: yellow;
+            background-color: white;
         }
     }
 
@@ -99,6 +99,12 @@ body.high-contrast {
             background-color: black;
             color: $primary-white;
         }
+        }
+        .OtherOptions{
+            .Lecon, .APropos, .AideUtil{
+                background-color: black;
+                color: $primary-white;
+            }
         }
     }
 
