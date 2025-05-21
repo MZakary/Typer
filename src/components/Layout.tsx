@@ -57,7 +57,7 @@ function Layout() {
         </div>
         <div className='OtherOptions'>
           <Link to="/lecons" className='Lecon'>Leçons</Link>
-          <a href="" className='AideUtil'>Aide utilisateur</a>
+          {/* <a href="" className='AideUtil'>Aide utilisateur</a> */}
           <Link to="/a-propos" className='APropos'>À propos</Link>
         </div>
       </header>
