@@ -4,6 +4,7 @@ import Layout from './components/Layout';
 import NewMainPage from './components/NewMainPage';
 import './SCSS/_style.scss';
 import NewTyper from './components/NewTyper';
+import NewestTyper from './components/NewestTyper';
 import About from './components/About';
 import ListeLecons from './components/ListeLecons';
 import Levels from './assets/lecons';
@@ -34,9 +35,11 @@ function App() {
             children: [
               { element: <NewMainPage/>, index: true },
               {path: 'lecons', element: <ListeLecons/>},
-              {path: 'lecon1', element: <NewTyper levels={Levels[0]} lessonName={'La Lettre a'} />},
-              {path: 'lecon2', element: <NewTyper levels={Levels[1]} lessonName={'La Lettre s'} />},
-              {path: 'lecon3', element: <NewTyper levels={Levels[2]} lessonName={'La Lettre d'} />},
+              {path: 'lecon1', element: <NewestTyper levels={[Levels[0]]} lessonName={'La Lettre a'} />},
+              {path: 'lecon2', element: <NewestTyper levels={[Levels[1]]} lessonName={'La Lettre a'} />},
+              // {path: 'lecon2', element: <NewTyper levels={Levels[1]} lessonName={'La Lettre s'} />},
+              // {path: 'lecon3', element: <NewTyper levels={Levels[2]} lessonName={'La Lettre d'} />},
+              {path: 'lecon3', element: <NewestTyper levels={[Levels[2]]} lessonName={'La Lettre d'} />},
               // {path: 'lecon4', element: <NewTyper levels={Levels[3]} lessonName={'La Lettre f'} />},
               // {path: 'lecon5', element: <NewTyper levels={Levels[4]} lessonName={'La Lettre j'} />},
               // {path: 'lecon6', element: <NewTyper levels={Levels[5]} lessonName={'La Lettre k'} />},
