@@ -143,7 +143,11 @@ function NewestTyper({levels, lessonName} : TyperProps) {
                         const nextWord = currentSentence[nextIndex];
                         if (nextWord && nextWord.length > 0) {
                             speakLetter('Première lettre');
-                            speakLetter(nextWord[0]);
+                            if (nextWord[0] === nextWord[0].toUpperCase() && nextWord[0] !== nextWord[0].toLowerCase()) {
+                                speakLetter(nextWord[0] + ' majuscule');
+                            }else {
+                                speakLetter(nextWord[0]);
+                            }
                         }
                     } else {
                         // Sentence completed - move to next sentence or level
@@ -225,7 +229,11 @@ function NewestTyper({levels, lessonName} : TyperProps) {
     const announceCurrentLetter = () => {
         const currentWord = currentSentence[currentWordIndex] || '';
         const firstLetter = currentWord.charAt(0);
-        speakLetter("Première lettre du mot actuel: " + firstLetter);
+        if (firstLetter === firstLetter.toUpperCase() && firstLetter !== firstLetter.toLowerCase()) {
+            speakLetter("Première lettre: " + firstLetter + "majuscule");
+        } else {
+            speakLetter("Première lettre: " + firstLetter);
+        }
     };
 
     const spellCurrentWord = () => {
@@ -295,7 +303,6 @@ function NewestTyper({levels, lessonName} : TyperProps) {
                     <div className="Stats">
                         <p>Erreurs: {errorCount}</p>
                         <p>Précision: {accuracy}%</p>
-                        <p>Niveau: {currentLevel + 1}/{levels.length}</p>
                         <p>Phrase: {currentSentenceIndex + 1}/{levels[currentLevel].length}</p>
                         <p>Mot: {currentWordIndex + 1}/{currentSentence.length}</p>
                     </div>

@@ -1,6 +1,6 @@
 const Levels: string[][][] = [
   [
-    ["Les", "pommes", "sont", "rouges"],
+    ["Les", "Pommes", "sont", "rouges"],
     ["a", "aa", "aa", "aaa", "asdf", "a", "aa", "aaa", "aaaa", "a", "a", "aaa"]
   ],
   [
