@@ -60,7 +60,7 @@ section.Typer{
     }
 
     .StartButton{
-        height: 100%;
+        height: calc(100vh - 123px);
         display: flex;
         flex-direction: column;
         justify-content: center;

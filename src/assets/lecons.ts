@@ -1,7 +1,7 @@
 const Levels: string[][][] = [
   [
-    ["sentence", "to", "say"],
-    ["apples", "are", "good", "too"]
+    ["Les", "pommes", "sont", "rouges"],
+    ["a", "aa", "aa", "aaa", "asdf", "a", "aa", "aaa", "aaaa", "a", "a", "aaa"]
   ],
   [
     ["apples", "are", "good"],
