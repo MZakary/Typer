@@ -315,12 +315,12 @@ function NewestTyper({levels, lessonName} : TyperProps) {
                     <button
                         className="BoutonDownload"
                         onClick={() => {
-                            const data = `Results:\nName: ${playerName}\nErreurs: ${errorCount}\nAccuracy: ${accuracy}%\nTime: ${timeTaken} secondes`;
+                            const data = `Résultat:\nName: ${playerName}\nErreurs: ${errorCount}\nPrécision: ${accuracy}%\nTemps: ${timeTaken} secondes`;
                             const blob = new Blob([data], { type: 'text/plain' });
                             const url = URL.createObjectURL(blob);
                             const link = document.createElement('a');
                             link.href = url;
-                            link.download = 'game_results.txt';
+                            link.download = `game_results_${playerName}.txt`;
                             document.body.appendChild(link);
                             link.click();
                             document.body.removeChild(link);
