@@ -1,9 +1,14 @@
 import { useState, useEffect } from "react";
 import { playSound } from "@/utils/generalUtils";
-import wordDictionary from "@/assets/dictionnary";
+
+type ContentType = 'phrase' | 'mots';
+interface LevelGroup {
+  type: ContentType;
+  content: string[][];
+}
 
 interface TyperProps {
-    levels: string[][][]; // Array of levels, each containing multiple sentences
+    levels: LevelGroup[][];
     lessonName: string;
 }
 
@@ -24,8 +29,8 @@ function NewestTyper({levels, lessonName} : TyperProps) {
     const [endTime, setEndTime] = useState<Date | null>(null);
     const [timeTaken, setTimeTaken] = useState<number | null>(null);
 
-    // Get current sentence being typed
-    const currentSentence = levels[currentLevel]?.[currentSentenceIndex] || [];
+    const currentGroup = levels[currentLevel]?.[currentSentenceIndex] || { type: 'phrase', content: [[]] };
+    const currentSentence = currentGroup.content[0] || [];
 
     const handleToggleSynth = () => {
         setToggleSynth((prev) => !prev);
@@ -33,16 +38,15 @@ function NewestTyper({levels, lessonName} : TyperProps) {
 
     const handleStartGame = () => {
         setGameStarted(true);
-        announceCurrentSentence();
         setStartTime(new Date());
-
-        // // Say the first letter of the first word
-        // const firstWord = levels[0][0][0];
-        // const firstLetter = firstWord?.[0];
-        // if (firstLetter) {
-        //     speakLetter("Première lettre:");
-        //     speakLetter(firstLetter);
-        // }
+        
+        if (currentGroup.type === 'phrase') {
+            speakLetter("Commencez à taper la phrase. Appuyez sur espace après chaque mot.");
+        } else {
+            speakLetter("Commencez à taper les mots. Appuyez sur espace après chaque mot.");
+        }
+        
+        announceCurrentSentence();
     };
 
     const handleFocus = () => {
@@ -53,7 +57,6 @@ function NewestTyper({levels, lessonName} : TyperProps) {
         setIsTAFocused(false);
     };
 
-    // Initialize the first level
     useEffect(() => {
         document.title = `${lessonName} - Typer`;
         setCurrentLevel(0);
@@ -62,7 +65,6 @@ function NewestTyper({levels, lessonName} : TyperProps) {
         speakLetter("Avant de commencer le niveau");
     }, []);
 
-    // Handle keyboard input
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
             if (!isTAFocused || gameEnded) return;
@@ -92,7 +94,6 @@ function NewestTyper({levels, lessonName} : TyperProps) {
                 key = ';';
             }
         
-            // Handle character input
             if (key.length === 1 && /^[a-zA-Zéèàçùâêîôûäëïöü;']$/.test(key)) {
                 const currentWord = currentSentence[currentWordIndex];
                 const nextChar = currentWord?.[inputString.length];
@@ -103,7 +104,6 @@ function NewestTyper({levels, lessonName} : TyperProps) {
                     const newInputString = inputString + key;
                     setInputString(newInputString);
 
-                    // Speak the next letter, if there is one
                     const upcomingChar = currentWord?.[newInputString.length];
                     if (upcomingChar) {
                         if (speechSynthesis.speaking) {
@@ -117,11 +117,15 @@ function NewestTyper({levels, lessonName} : TyperProps) {
                         speechSynthesis.cancel();
                     }
                     playSound('/sounds/ErrorSound.wav');
-                    speakLetter('Erreur! Réessayez à partir de la dernière lettre insérée!');
+                    
+                    if (currentGroup.type === 'phrase') {
+                        speakLetter("Erreur dans la phrase! Réessayez.");
+                    } else {
+                        speakLetter("Erreur! Réessayez ce mot.");
+                    }
                 }
             }
             
-            // Handle space to complete word
             if (event.key === ' ') {
                 const currentWord = currentSentence[currentWordIndex];
                 
@@ -131,52 +135,60 @@ function NewestTyper({levels, lessonName} : TyperProps) {
                     }
                     playSound('/sounds/GoodSound.wav');
                     
+                    if (currentGroup.type === 'phrase') {
+                        speakLetter("Mot correct dans la phrase!");
+                    } else {
+                        speakLetter("Mot correct!");
+                    }
+                    
                     if (currentWordIndex < currentSentence.length - 1) {
-                        const nextIndex = currentWordIndex + 1; // <-- use this for immediate access
+                        const nextIndex = currentWordIndex + 1;
                         setCurrentWordIndex(nextIndex);
                         setInputString('');
                         
-                        speakLetter('Correct! Prochain mot:');
+                        speakLetter('Prochain mot:');
                         speakLetter(currentSentence[nextIndex]);
 
-                        // Announce first letter of the next word
                         const nextWord = currentSentence[nextIndex];
                         if (nextWord && nextWord.length > 0) {
                             speakLetter('Première lettre');
                             if (nextWord[0] === nextWord[0].toUpperCase() && nextWord[0] !== nextWord[0].toLowerCase()) {
                                 speakLetter(nextWord[0] + ' majuscule');
-                            }else {
+                            } else {
                                 speakLetter(nextWord[0]);
                             }
                         }
                     } else {
-                        // Sentence completed - move to next sentence or level
-                        speakLetter('Bravo! Phrase complétée!');
+                        if (currentGroup.type === 'phrase') {
+                            speakLetter("Phrase complétée avec succès!");
+                        } else {
+                            speakLetter("Liste de mots complétée!");
+                        }
                         
                         if (currentSentenceIndex < levels[currentLevel].length - 1) {
-                            // More sentences in this level
+                            const nextGroup = levels[currentLevel][currentSentenceIndex + 1];
+                            speakLetter(`Prêt pour la ${nextGroup.type === 'phrase' ? 'phrase suivante' : 'liste de mots suivante'}`);
+                            
                             setCurrentSentenceIndex(prev => prev + 1);
                             setCurrentWordIndex(0);
                             setInputString('');
                         } else {
-                            // Level completed - move to next level
                             const nextLevel = currentLevel + 1;
                             
                             if (nextLevel < levels.length) {
+                                speakLetter(
+                                    `Niveau ${currentGroup.type === 'phrase' ? 'de phrases' : 'de mots'} terminé!`
+                                );
                                 setCurrentLevel(nextLevel);
                                 setCurrentSentenceIndex(0);
                                 setCurrentWordIndex(0);
                                 setInputString('');
                                 speakLetter('Niveau suivant!');
-                                //announceCurrentSentence();
                             } else {
-                                // Game completed
                                 const endTime = new Date();
                                 setEndTime(endTime);
                                 if (startTime) {
-                                    const timeDifference = endTime.getTime() - startTime.getTime();
-                                    const secondsTaken = Math.floor(timeDifference / 1000);
-                                    setTimeTaken(secondsTaken);
+                                    setTimeTaken(Math.floor((endTime.getTime() - startTime.getTime()) / 1000));
                                 }
                                 
                                 setGameEnded(true);
@@ -208,37 +220,57 @@ function NewestTyper({levels, lessonName} : TyperProps) {
         }
     }, [currentLevel, currentSentenceIndex]);
 
-    
     const announceCurrentSentence = () => {
-        speakLetter("Tapez la phrase suivante:");
-        currentSentence.forEach((word, index) => {
-            speakLetter(word);
-        });
+        if (toggleSynth) return;
+        
+        if (currentGroup.type === 'phrase') {
+            speakLetter("Phrase à taper:");
+            const fullSentence = currentSentence.join(' ');
+            speakLetter(fullSentence);
+        } 
+        // else {
+        //     speakLetter("Mots à taper:");
+        //     currentSentence.forEach(word => {
+        //         speakLetter("Mot suivant:");
+        //         speakLetter(word);
+        //     });
+        // }
+        
         announceCurrentWord();
         announceCurrentLetter();
     };
 
     const announceCurrentWord = () => {
-        currentSentence.forEach((word, index) => {
-            if (index === currentWordIndex) {
-                speakLetter("Mot actuel: "+word);
-            }
-        });
+        if (toggleSynth) return;
+        
+        const currentWord = currentSentence[currentWordIndex];
+        if (currentGroup.type === 'phrase') {
+            speakLetter(`Mot actuel dans la phrase: ${currentWord}`);
+        } else {
+            speakLetter(`Mot à taper: ${currentWord}`);
+        }
     };
 
     const announceCurrentLetter = () => {
         const currentWord = currentSentence[currentWordIndex] || '';
         const firstLetter = currentWord.charAt(0);
         if (firstLetter === firstLetter.toUpperCase() && firstLetter !== firstLetter.toLowerCase()) {
-            speakLetter("Première lettre: " + firstLetter + "majuscule");
+            speakLetter("Première lettre: " + firstLetter + " majuscule");
         } else {
             speakLetter("Première lettre: " + firstLetter);
         }
     };
 
     const spellCurrentWord = () => {
+        if (toggleSynth) return;
+        
         const currentWord = currentSentence[currentWordIndex] || '';
-        speakLetter("Épellation du mot actuel:");
+        if (currentGroup.type === 'phrase') {
+            speakLetter("Épellation du mot dans la phrase:");
+        } else {
+            speakLetter("Épellation du mot:");
+        }
+        
         for (const char of currentWord) {
             speakLetter(char);
         }
@@ -303,7 +335,8 @@ function NewestTyper({levels, lessonName} : TyperProps) {
                     <div className="Stats">
                         <p>Erreurs: {errorCount}</p>
                         <p>Précision: {accuracy}%</p>
-                        <p>Phrase: {currentSentenceIndex + 1}/{levels[currentLevel].length}</p>
+                        <p>Type: {currentGroup.type === 'phrase' ? 'Phrase' : 'Mots'}</p>
+                        <p>Étape: {currentSentenceIndex + 1}/{levels[currentLevel].length}</p>
                         <p>Mot: {currentWordIndex + 1}/{currentSentence.length}</p>
                     </div>
                     
@@ -311,7 +344,7 @@ function NewestTyper({levels, lessonName} : TyperProps) {
                         <textarea 
                             onFocus={handleFocus} 
                             onBlur={handleBlur} 
-                            className="TextArea" 
+                            className={`TextArea ${currentGroup.type}-mode`}
                             maxLength={currentSentence[currentWordIndex]?.length || 0}  
                             placeholder={currentSentence[currentWordIndex]}
                             value={inputString}
@@ -329,36 +362,8 @@ function NewestTyper({levels, lessonName} : TyperProps) {
                 <div className="StartButton" autoFocus>
                     <h1>{lessonName}</h1>
                     <h2 className="LessonMessage">Instructions</h2>
-                    <p className="StartParagraph">Pour faciliter un repérage efficace des touches, des points de repère tactile peuvent être apposés sur les lettres F et J qui se trouvent sur la deuxième rangée.</p>
-                    <p className="StartParagraph">Pour bien positionner vos mains, veuillez d'abord mettre vos pouces sur la barre d’espacement puis déplacer vos index vers le haut de façon à atteindre les points de repères situés sur le f et le j.</p>
-                    <p className="StartParagraph">Les lettres <strong>A, S, D, F, J, K, L</strong> et le <strong>POINT-VIRGULE (;)</strong> sont des touches de la rangée de <strong>BASE</strong>. </p>                
-                    <p className="StartParagraph">Nous y reviendrons un peu plus tard, mais il est bon de mentionner qu'à partir de cette rangée, lorsque l'on frappe des touches supérieures, on déplace le doigt légèrement à gauche. Lorsque l'on frappe des touches inférieures, on déplace le doigt légèrement à droite. </p>
-                    
-                    {/* <p>Explorons maintenant la rangée de base :</p> */}
-
-                    <div className="divMains">
-                        <div className="divMainsGauche">
-                            <h3>Main gauche :</h3>
-                            <ul>
-                                <li>Pour la lettre A. on utilise l'auriculaire gauche. </li>
-                                <li>Pour la lettre S. on utilise l'annulaire gauche.</li>
-                                <li>Pour la lettre D. on utilise le majeur gauche.</li>
-                                <li>Pour la lettre F. on utilise l'index gauche</li>
-                            </ul>
-                        </div>
-                        <div className="divMainsDroite">
-                            <h3>Main droite :</h3>
-                            <ul>
-                                <li>Pour la touche « ; », on utilise l'auriculaire droit. </li>
-                                <li>Pour la lettre L. on utilise l'annulaire droite.</li>
-                                <li>Pour la lettre K. on utilise le majeur droite.</li>
-                                <li>Pour la lettre J. on utilise l'index droite</li>
-                            </ul>
-                        </div>
-                    </div>
-                    
-                    <p className="StartParagraph">Vous devez appuyer sur la touche espace après chaque caractère, mot ou expression demandé.</p>
-                    <p className="StartParagraph">Rappel!  Vous pouvez effectuer la commande clavier Ctrl+r afin de répéter l'information ou consulter les instructions directement à partir de la page d'activités.</p>
+                    <p className="StartParagraph">Pour faciliter un repérage efficace des touches...</p>
+                    {/* Keep your existing instructions here */}
                     <div className="Options">
                         <label htmlFor="toggleSynth">Désactiver la synthèse vocale ?</label>
                         <input 

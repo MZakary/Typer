@@ -1,12 +1,33 @@
-const Levels: string[][][] = [
+type LevelGroup = {
+  type: 'phrase' | 'mots';
+  content: string[][];
+};
+
+type Level = LevelGroup[];
+
+const Levels: Level[] = [
   [
-    ["Les", "Pommes", "sont", "rouges"],
-    ["a", "aa", "aa", "aaa", "asdf", "a", "aa", "aaa", "aaaa", "a", "a", "aaa"]
+    {
+      type: 'phrase',
+      content: [["Les", "Pommes", "sont", "rouges"]]
+    },
+    {
+      type: 'mots',
+      content: [["a", "aa", "aa", "aaa", "asdf", "a", "aa", "aaa", "aaaa", "a", "a", "aaa"]]
+    }
   ],
   [
-    ["apples", "are", "good"],
-    ["sentence", "to", "say", "too"]
-  ],
+    {
+      type: 'phrase',
+      content: [["apples", "are", "good"]]
+    },
+    {
+      type: 'mots',
+      content: [["sentence", "to", "say", "too"]]
+    }
+  ]
 ];
 
 export default Levels;
+
+
