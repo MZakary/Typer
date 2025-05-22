@@ -360,10 +360,37 @@ function NewestTyper({levels, lessonName} : TyperProps) {
                 </div>
             ) : (
                 <div className="StartButton" autoFocus>
-                    <h1>{lessonName}</h1>
-                    <h2 className="LessonMessage">Instructions</h2>
-                    <p className="StartParagraph">Pour faciliter un repérage efficace des touches...</p>
-                    {/* Keep your existing instructions here */}
+                    <h1 className="LessonMessage">Instructions</h1>
+                    <p className="StartParagraph">Pour faciliter un repérage efficace des touches, des points de repère tactile peuvent être apposés sur les lettres F et J qui se trouvent sur la deuxième rangée.</p>
+                    <p className="StartParagraph">Pour bien positionner vos mains, veuillez d'abord mettre vos pouces sur la barre d’espacement puis déplacer vos index vers le haut de façon à atteindre les points de repères situés sur le f et le j.</p>
+                    <p className="StartParagraph">Les lettres <strong>A, S, D, F, J, K, L</strong> et le <strong>POINT-VIRGULE (;)</strong> sont des touches de la rangée de <strong>BASE</strong>. </p>                
+                    <p className="StartParagraph">Nous y reviendrons un peu plus tard, mais il est bon de mentionner qu'à partir de cette rangée, lorsque l'on frappe des touches supérieures, on déplace le doigt légèrement à gauche. Lorsque l'on frappe des touches inférieures, on déplace le doigt légèrement à droite. </p>
+                    
+                    {/* <p>Explorons maintenant la rangée de base :</p> */}
+
+                    <div className="divMains">
+                        <div className="divMainsGauche">
+                            <h3>Main gauche :</h3>
+                            <ul>
+                                <li>Pour la lettre A. on utilise l'auriculaire gauche. </li>
+                                <li>Pour la lettre S. on utilise l'annulaire gauche.</li>
+                                <li>Pour la lettre D. on utilise le majeur gauche.</li>
+                                <li>Pour la lettre F. on utilise l'index gauche</li>
+                            </ul>
+                        </div>
+                        <div className="divMainsDroite">
+                            <h3>Main droite :</h3>
+                            <ul>
+                                <li>Pour la touche « ; », on utilise l'auriculaire droit. </li>
+                                <li>Pour la lettre L. on utilise l'annulaire droite.</li>
+                                <li>Pour la lettre K. on utilise le majeur droite.</li>
+                                <li>Pour la lettre J. on utilise l'index droite</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <p className="StartParagraph">Vous devez appuyer sur la touche espace après chaque caractère, mot ou expression demandé.</p>
+                    <p className="StartParagraph">Rappel!  Vous pouvez effectuer la commande clavier Ctrl+r afin de répéter l'information ou consulter les instructions directement à partir de la page d'activités.</p>
                     <div className="Options">
                         <label htmlFor="toggleSynth">Désactiver la synthèse vocale ?</label>
                         <input 
