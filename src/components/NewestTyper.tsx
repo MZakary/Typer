@@ -35,6 +35,14 @@ function NewestTyper({levels, lessonName} : TyperProps) {
         setGameStarted(true);
         announceCurrentSentence();
         setStartTime(new Date());
+
+        // // Say the first letter of the first word
+        // const firstWord = levels[0][0][0];
+        // const firstLetter = firstWord?.[0];
+        // if (firstLetter) {
+        //     speakLetter("Première lettre:");
+        //     speakLetter(firstLetter);
+        // }
     };
 
     const handleFocus = () => {
@@ -88,11 +96,21 @@ function NewestTyper({levels, lessonName} : TyperProps) {
             if (key.length === 1 && /^[a-zA-Zéèàçùâêîôûäëïöü;']$/.test(key)) {
                 const currentWord = currentSentence[currentWordIndex];
                 const nextChar = currentWord?.[inputString.length];
-                
+
                 setTotalInputs(prev => prev + 1);
-                
+
                 if (key === nextChar) {
-                    setInputString(prev => prev + key);
+                    const newInputString = inputString + key;
+                    setInputString(newInputString);
+
+                    // Speak the next letter, if there is one
+                    const upcomingChar = currentWord?.[newInputString.length];
+                    if (upcomingChar) {
+                        if (speechSynthesis.speaking) {
+                            speechSynthesis.cancel();
+                        }
+                        speakLetter(upcomingChar);
+                    }
                 } else {
                     setErrorCount(prev => prev + 1);
                     if (speechSynthesis.speaking) {
@@ -113,12 +131,20 @@ function NewestTyper({levels, lessonName} : TyperProps) {
                     }
                     playSound('/sounds/GoodSound.wav');
                     
-                    // Move to next word or complete sentence
                     if (currentWordIndex < currentSentence.length - 1) {
-                        setCurrentWordIndex(prev => prev + 1);
+                        const nextIndex = currentWordIndex + 1; // <-- use this for immediate access
+                        setCurrentWordIndex(nextIndex);
                         setInputString('');
+                        
                         speakLetter('Correct! Prochain mot:');
-                        speakLetter(currentSentence[currentWordIndex + 1]);
+                        speakLetter(currentSentence[nextIndex]);
+
+                        // Announce first letter of the next word
+                        const nextWord = currentSentence[nextIndex];
+                        if (nextWord && nextWord.length > 0) {
+                            speakLetter('Première lettre');
+                            speakLetter(nextWord[0]);
+                        }
                     } else {
                         // Sentence completed - move to next sentence or level
                         speakLetter('Bravo! Phrase complétée!');
@@ -185,6 +211,7 @@ function NewestTyper({levels, lessonName} : TyperProps) {
             speakLetter(word);
         });
         announceCurrentWord();
+        announceCurrentLetter();
     };
 
     const announceCurrentWord = () => {
@@ -193,6 +220,12 @@ function NewestTyper({levels, lessonName} : TyperProps) {
                 speakLetter("Mot actuel: "+word);
             }
         });
+    };
+
+    const announceCurrentLetter = () => {
+        const currentWord = currentSentence[currentWordIndex] || '';
+        const firstLetter = currentWord.charAt(0);
+        speakLetter("Première lettre du mot actuel: " + firstLetter);
     };
 
     const spellCurrentWord = () => {
