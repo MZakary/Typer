@@ -8,29 +8,26 @@ import ListeLecons from './components/ListeLecons';
 import Levels from './assets/lecons';
 
 function App() {
+  const lessonRoutes = Levels.map((level, index) => ({
+    path: `lecon${index + 1}`,
+    element: <NewestTyper levels={[level]} />
+  }));
 
-  return (
-    <> 
-      <RouterProvider 
-        router={createBrowserRouter([
-          {
-            path: '/',
-            element: <Layout />,
-            children: [
-              { element: <NewMainPage/>, index: true },
-              {path: 'lecons', element: <ListeLecons/>},
-              {path: 'lecon1', element: <NewestTyper levels={[Levels[0]]} />},
-              {path: 'lecon2', element: <NewestTyper levels={[Levels[1]]} />},
-              {path: 'lecon3', element: <NewestTyper levels={[Levels[2]]} />},
-              
-              {path: 'a-propos', element: <About/>},
-              {path: '*', element: <Navigate to="/" replace /> },
-            ],
-          },
-        ])}
-      />
-    </>
-  )
+  const router = createBrowserRouter([
+    {
+      path: '/',
+      element: <Layout />,
+      children: [
+        { element: <NewMainPage />, index: true },
+        { path: 'lecons', element: <ListeLecons /> },
+        ...lessonRoutes,
+        { path: 'a-propos', element: <About /> },
+        { path: '*', element: <Navigate to="/" replace /> },
+      ]
+    }
+  ]);
+
+  return <RouterProvider router={router} />;
 }
 
 export default App;

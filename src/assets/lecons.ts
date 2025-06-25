@@ -41,6 +41,21 @@ const Levels: Level[] = [
         content: [["sentence", "to", "say", "too"]]
       }
     ]
+  },
+  {
+    name: "Exercise 3",
+    exercises: [
+      {
+        type: 'phrase',
+        name: 'Leçon 5',
+        content: [["oranges", "are", "also", "good"]]
+      },
+      {
+        type: 'phrase',
+        name: 'Leçon 6',
+        content: [["sentence", "to", "say", "too"]]
+      }
+    ]
   }
 ];
 
