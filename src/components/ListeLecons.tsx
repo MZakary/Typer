@@ -13,8 +13,9 @@ function ListeLecons() {
             <p>Nous vous invitons à choisir parmi la liste des leçons suivantes:</p>
             <ul className="listeContainer">
                 {Levels.map((level, index) => (
+                    
                     <li className="listeItem" key={index}>
-                        <Link to={`/lecon${index + 1}`}>Leçon {index + 1}</Link>
+                        <Link to={`/lecon${index + 1}`}>Leçon {index + 1}: {level.name}</Link>
                     </li>
                 ))}
             </ul>
