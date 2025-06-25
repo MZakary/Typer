@@ -193,6 +193,7 @@ function NewestTyper({ levels }: TyperProps) {
               } else {
                 const endTime = new Date();
                 setEndTime(endTime);
+                console.log("End time:", endTime);
                 if (startTime) {
                   setTimeTaken(Math.floor((endTime.getTime() - startTime.getTime()) / 1000));
                 }
@@ -304,9 +305,12 @@ function NewestTyper({ levels }: TyperProps) {
 
   return (
     <section className="Typer" role="application">
-      {gameEnded ? (
+      {gameEnded  ? (
         <div className="EndScreen">
           <h1>Vous avez terminé la leçon</h1>
+          {gameEnded && endTime && (
+            <p>Fin du jeu à : {endTime.toLocaleTimeString()}</p>
+          )}
           <div className="NameInputDiv">
             <label htmlFor="Name">Veuillez entrer votre nom</label>
             <input 
